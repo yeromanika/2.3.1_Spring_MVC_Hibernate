@@ -24,9 +24,9 @@ public class UserController {
     @PostMapping("/save")
     public String saveUser(@ModelAttribute User user) {
         if (user.getId() == null) {
-            userService.saveUser(user); // Добавление
+            userService.saveUser(user);
         } else {
-            userService.updateUser(user); // Редактирование
+            userService.updateUser(user);
         }
         return "redirect:/users";
     }
