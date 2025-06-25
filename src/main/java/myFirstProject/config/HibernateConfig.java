@@ -17,23 +17,21 @@ import java.util.Properties;
 @EnableTransactionManagement
 public class HibernateConfig {
 
-    // Настройка пула соединений HikariCP
     @Bean
     public DataSource dataSource() {
         HikariDataSource ds = new HikariDataSource();
         ds.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        ds.setJdbcUrl("jdbc:mysql://localhost:3306/userdb?useSSL=false&serverTimezone=UTC");
+        ds.setJdbcUrl("jdbc:mysql://localhost:3306/userdb?useSSL=false&serverTimezone=UTC&createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=UTF-8");
         ds.setUsername("root");
         ds.setPassword("qW3$rM6#pL9Z");
-        ds.setAutoCommit(false);
         ds.setMaximumPoolSize(10);
         ds.setMinimumIdle(5);
         ds.setIdleTimeout(600000);
         ds.setConnectionTimeout(30000);
+        ds.setAutoCommit(false);
         return ds;
     }
 
-    // Настройка EntityManagerFactory
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
@@ -46,20 +44,15 @@ public class HibernateConfig {
         props.put("hibernate.dialect", "org.hibernate.dialect.MySQL8Dialect");
         props.put("hibernate.show_sql", "true");
         props.put("hibernate.format_sql", "true");
-        props.put("hibernate.connection.provider_disables_autocommit", "true");
-        props.put("hibernate.connection.characterEncoding", "utf8");
-        props.put("hibernate.connection.charSet", "utf8");
-        props.put("hibernate.connection.useUnicode", "true");
         em.setJpaProperties(props);
+
         return em;
     }
 
-    // Настройка менеджера транзакций
     @Bean
     public PlatformTransactionManager transactionManager(EntityManagerFactory emf) {
-        return new JpaTransactionManager(emf);
+        JpaTransactionManager transactionManager = new JpaTransactionManager();
+        transactionManager.setEntityManagerFactory(emf);
+        return transactionManager;
     }
 }
-
-
-
